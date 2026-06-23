@@ -1,10 +1,11 @@
-# Enterprise AI Agent Platform (Azure AI Foundry + React + Python)
+# Enterprise AI Knowledge Platform  
+### Azure AI Foundry + Python + React + Enterprise RAG Architecture
 
-An enterprise-grade multi-agent AI platform built using Microsoft Azure AI Foundry, Azure Agent Service, Python backend services, and React frontend.
+An enterprise-grade AI platform built using Microsoft Azure AI Foundry, Azure OpenAI, Python backend services, Azure AI Search, and React frontend.
 
-This project simulates a production-ready enterprise AI architecture similar to what large consulting organizations build for enterprise customers using modern Agentic AI architecture.
+This project focuses on building a production-ready enterprise knowledge platform that enables secure document ingestion, vector storage, intelligent retrieval, grounded response generation, evaluation pipelines, and guardrail enforcement using Microsoft’s modern Agent Framework ecosystem.
 
-The goal is to move beyond simple RAG applications and demonstrate how production AI systems can orchestrate multiple agents, enterprise tools, retrieval systems, observability, and secure business workflows.
+The goal is to simulate how enterprise consulting organizations build scalable AI platforms for customers using modern retrieval pipelines, agentic workflows, evaluation frameworks, and enterprise governance controls.
 
 ---
 
@@ -16,29 +17,33 @@ Traditional AI applications typically follow a simple request-response pattern.
 User → Prompt → LLM → Response
 ```
 
-Modern enterprise AI systems require significantly more orchestration.
+Modern enterprise AI systems require significantly more architecture.
 
 ```text
-User Request
-      ↓
-Agent Runtime
-      ↓
-Intent Classification
-      ↓
-Retrieval Workflow
-      ↓
-Reasoning Engine
-      ↓
-Tool Execution
-      ↓
-Validation Layer
-      ↓
-Human Approval
-      ↓
-Final Response
+Enterprise Documents
+        ↓
+Document Upload Pipeline
+        ↓
+Document Parsing
+        ↓
+Chunking Pipeline
+        ↓
+Embedding Generation
+        ↓
+Vector Storage
+        ↓
+Retrieval Pipeline
+        ↓
+Agent Reasoning
+        ↓
+Evaluation Pipeline
+        ↓
+Guardrails Pipeline
+        ↓
+Final Grounded Response
 ```
 
-This project demonstrates how enterprise-grade AI systems should be built using Microsoft's modern Agent Framework architecture.
+This project demonstrates how enterprise-grade AI systems should be designed using Microsoft Azure AI Foundry and modern Agent Framework architecture.
 
 ---
 
@@ -53,29 +58,61 @@ Azure API Management
       ↓
 Python FastAPI Backend
       ↓
-Azure AI Foundry Agent Service
+-------------------------------------------------
+Document Ingestion Pipeline
+-------------------------------------------------
+Upload Document
       ↓
------------------------------------------
-| Agent Runtime                         |
-|                                       |
-| Intent Agent                          |
-| Retrieval Agent                       |
-| Reasoning Agent                       |
-| Tool Execution Agent                  |
-| Validation Agent                      |
------------------------------------------
+Document Parser
       ↓
-Enterprise Services Layer
+Chunking Service
       ↓
------------------------------------------
-| Azure AI Search                       |
-| Azure SQL Database                    |
-| SharePoint Knowledge Base             |
-| Internal REST APIs                    |
-| Azure Functions                       |
------------------------------------------
+Embedding Service
       ↓
-Observability Layer
+Azure AI Search Vector Store
+-------------------------------------------------
+      ↓
+-------------------------------------------------
+Retrieval Pipeline
+-------------------------------------------------
+User Query
+      ↓
+Query Embedding
+      ↓
+Vector Search
+      ↓
+Relevant Document Retrieval
+-------------------------------------------------
+      ↓
+-------------------------------------------------
+Agent Runtime (Azure AI Foundry)
+-------------------------------------------------
+Context Injection
+      ↓
+Reasoning Agent
+      ↓
+Grounded Response Generation
+-------------------------------------------------
+      ↓
+-------------------------------------------------
+Evaluation Pipeline
+-------------------------------------------------
+Faithfulness Evaluation
+Relevance Evaluation
+Context Precision
+Answer Quality
+-------------------------------------------------
+      ↓
+-------------------------------------------------
+Guardrails Pipeline
+-------------------------------------------------
+Prompt Injection Detection
+Hallucination Detection
+Safety Validation
+Policy Compliance Checks
+-------------------------------------------------
+      ↓
+Final Response
       ↓
 Azure Monitor + Application Insights
 ```
@@ -84,111 +121,156 @@ Azure Monitor + Application Insights
 
 ## Core Features
 
-### Multi-Agent Architecture
+### Document Ingestion Pipeline
 
-The system separates responsibilities across multiple AI agents.
-
-- Intent Classification Agent
-- Retrieval Agent
-- Reasoning Agent
-- Tool Execution Agent
-- Validation Agent
-
----
-
-### Retrieval Augmented Generation (RAG)
-
-Enterprise document retrieval using:
-
-- Azure AI Search
-- Vector Search
-- Hybrid Search
-- Enterprise Knowledge Base
+Enterprise documents are uploaded and processed into searchable knowledge.
 
 Supported document types:
 
 - PDF
-- Word Documents
-- SharePoint Content
-- Internal Policy Documents
+- DOCX
+- TXT
+- Markdown
+- SharePoint Documents
 
----
-
-### Tool Calling
-
-Agents can invoke enterprise systems through tools.
-
-Examples:
-
-- Retrieve patient information
-- Search policy documents
-- Create incident tickets
-- Execute business workflows
-- Query internal APIs
-
----
-
-### Validation Layer
-
-All generated responses are validated before returning to users.
-
-Validation checks:
-
-- Hallucination detection
-- Source verification
-- Policy contradiction checks
-- Confidence score calculation
-
----
-
-### Human Approval Workflow
-
-Sensitive actions require human review before execution.
-
-Example workflow:
+Pipeline:
 
 ```text
-AI Recommendation
-      ↓
-Confidence Evaluation
-      ↓
-Human Review
-      ↓
-Approve / Reject
-      ↓
-Execute Action
+Upload → Parse → Chunk → Embed → Store Vector
 ```
+
+---
+
+### Vector Storage
+
+Document chunks are converted into embeddings and stored in vector database.
+
+Technology:
+
+- Azure AI Search
+- Vector Search
+- Hybrid Search
+
+Embedding models:
+
+- text-embedding-3-small
+- text-embedding-3-large
+
+---
+
+### Retrieval Pipeline (RAG)
+
+User questions are transformed into embeddings and matched against stored vectors.
+
+Process:
+
+```text
+Question
+    ↓
+Embedding Generation
+    ↓
+Similarity Search
+    ↓
+Top K Retrieval
+    ↓
+Context Injection
+```
+
+Capabilities:
+
+- Semantic Search
+- Hybrid Search
+- Context Retrieval
+- Source Citation
+
+---
+
+### Agent Reasoning Layer
+
+Azure AI Foundry agent processes retrieved context and generates grounded answers.
+
+Responsibilities:
+
+- Grounded response generation
+- Multi-step reasoning
+- Tool calling
+- Enterprise workflow execution
+
+Models:
+
+- GPT-4o
+- GPT-4o-mini
+
+---
+
+### Evaluation Pipeline
+
+All responses are evaluated before returning to user.
+
+Evaluation criteria:
+
+- Faithfulness
+- Answer relevance
+- Context precision
+- Answer completeness
+- Groundedness verification
+
+Purpose:
+
+Ensure generated answers are trustworthy and aligned with source documents.
+
+---
+
+### Guardrails Pipeline
+
+Enterprise AI systems require protection against unsafe outputs.
+
+Guardrails include:
+
+- Prompt injection detection
+- Hallucination detection
+- Restricted content filtering
+- PII detection
+- Policy compliance validation
+
+Purpose:
+
+Prevent unsafe or ungrounded AI responses.
 
 ---
 
 ### Enterprise Security
 
-Authentication and authorization handled through:
+Authentication and authorization handled through enterprise identity.
+
+Security stack:
 
 - Microsoft Entra ID
 - RBAC
 - Managed Identity
 - Secure API Gateway
+- Role-based document access
 
 ---
 
 ### Observability
 
-Production monitoring for enterprise deployments.
+Production monitoring for enterprise AI workloads.
 
-Metrics tracked:
+Tracked metrics:
 
+- Prompt execution logs
 - Token usage
-- Agent latency
+- Latency monitoring
 - Tool execution logs
-- Failure tracking
-- Prompt tracing
-- Cost monitoring
+- Failure tracing
+- Retrieval accuracy
+- Model cost monitoring
 
 Services:
 
 - Azure Monitor
-- Application Insights
+- Azure Application Insights
 
 ---
 
@@ -216,18 +298,25 @@ Services:
 ### AI Platform
 
 - Azure AI Foundry
-- Azure Agent Service
 - Azure OpenAI
 - GPT-4o
 - GPT-4o-mini
+- Microsoft Agent Framework
 
 ---
 
-### Data Layer
+### Document Processing
+
+- PyPDF
+- Python-docx
+- Text Extraction Services
+
+---
+
+### Vector Storage
 
 - Azure AI Search
-- Azure SQL
-- Azure Blob Storage
+- Embedding Models
 
 ---
 
@@ -235,34 +324,46 @@ Services:
 
 - Azure API Management
 - Azure Functions
+- Azure Blob Storage
 - Azure Monitor
-- Azure Application Insights
+- Application Insights
 
 ---
 
-## Agent Workflow Example
+## End-to-End Request Flow
 
-Example enterprise workflow.
-
-User asks:
+User uploads enterprise documents.
 
 ```text
-Can a nurse administer medication X under current policy?
+Document Upload
+      ↓
+Parse Document Content
+      ↓
+Split Into Chunks
+      ↓
+Generate Embeddings
+      ↓
+Store in Azure AI Search
 ```
 
-Execution flow:
+User asks question.
 
 ```text
-1. User authenticated with Entra ID
-2. API Gateway validates request
-3. Agent Service starts session
-4. Intent Agent classifies request
-5. Retrieval Agent searches policy documents
-6. Reasoning Agent generates answer
-7. Validation Agent checks confidence
-8. If confidence is low → escalate to human
-9. Return answer with citations
-10. Log telemetry and audit record
+User Question
+      ↓
+Generate Query Embedding
+      ↓
+Retrieve Relevant Chunks
+      ↓
+Inject Context into Agent
+      ↓
+Generate Response
+      ↓
+Evaluate Response Quality
+      ↓
+Run Guardrails Validation
+      ↓
+Return Final Response
 ```
 
 ---
@@ -276,21 +377,32 @@ frontend/
   react-app/
 
 backend/
+
+  ingestion/
+    upload_service.py
+    parser.py
+    chunker.py
+
+  embeddings/
+    embedding_service.py
+
+  search/
+    vector_store.py
+
+  agents/
+    rag_agent.py
+
+  evaluation/
+    evaluator.py
+
+  guardrails/
+    content_filter.py
+
   api/
+    main.py
+
   services/
-  tools/
-
-agents/
-  intent_agent/
-  retrieval_agent/
-  reasoning_agent/
-  validator_agent/
-
-tools/
-  search_tool/
-  sql_tool/
-  sharepoint_tool/
-  workflow_tool/
+    foundry_client.py
 
 infra/
   bicep/
@@ -300,56 +412,62 @@ docs/
   architecture.md
 
 tests/
-  integration/
+  ingestion/
+  retrieval/
   evaluation/
+  guardrails/
 ```
 
 ---
 
 ## Enterprise Design Principles
 
-This project focuses on production-ready enterprise AI architecture.
+This platform follows enterprise AI engineering principles.
 
 Design principles:
 
 - Security First
-- Human-in-the-loop workflows
-- Grounded responses only
-- Observable agent execution
-- Explicit workflow orchestration
-- Enterprise authentication
-- Cost optimization
-- Scalable cloud-native deployment
+- Grounded Responses Only
+- Retrieval Before Generation
+- Observable AI Execution
+- Evaluation Before Delivery
+- Guardrails Before Response
+- Enterprise Authentication
+- Scalable Cloud-Native Deployment
+- Cost Optimization
 
 ---
 
 ## Future Enhancements
 
-Planned improvements:
+Planned roadmap:
 
-- Multi-agent orchestration workflows
+- Multi-agent orchestration
 - Model Context Protocol (MCP) integration
 - Agent memory persistence
-- Multi-tenant architecture
 - Streaming responses
-- Evaluation framework
-- Guardrails implementation
-- CI/CD pipeline deployment
+- Multi-tenant deployment
+- Continuous evaluation framework
+- Advanced guardrails engine
+- Human approval workflows
+- CI/CD deployment pipelines
 
 ---
 
 ## Purpose
 
-This project is designed to explore modern enterprise AI architecture patterns using Microsoft’s evolving Agent Framework ecosystem.
+This project explores modern enterprise AI architecture patterns aligned with Microsoft’s evolving AI roadmap.
 
 Focus areas:
 
-- Agentic AI Architecture
-- Enterprise AI Systems
-- Production AI Engineering
+- Enterprise AI Platforms
 - Azure AI Foundry
-- Multi-Agent Workflows
-- Secure Enterprise Deployments
+- Retrieval Augmented Generation (RAG)
+- Vector Search Architecture
+- Agentic AI Systems
+- Evaluation Frameworks
+- Guardrails Architecture
+- Production AI Engineering
 
 ---
 
@@ -357,4 +475,6 @@ Focus areas:
 
 Currently under active development.
 
-Version: v1 Architecture Phase
+Version: v2 Enterprise RAG Architecture
+
+Architecture Phase: Document Pipeline → Retrieval → Evaluation → Guardrails
