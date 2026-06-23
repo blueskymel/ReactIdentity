@@ -1,5 +1,4 @@
 from pypdf import PdfReader
-
 from backend.ingestion.parsers.base_parser import BaseParser
 
 

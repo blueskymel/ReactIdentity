@@ -121,6 +121,62 @@ Azure Monitor + Application Insights
 
 ## Core Features
 
+## Software Architecture Principles
+
+This project applies enterprise software engineering principles to AI platform development rather than treating AI workflows as simple scripts or prototypes.
+
+The system is designed using SOLID principles to ensure maintainability, extensibility, and production readiness.
+
+Applied principles:
+
+### Single Responsibility Principle (SRP)
+
+Each component has one clear responsibility.
+
+Examples:
+
+- UploadService → file persistence
+- Parser → document text extraction
+- Chunker → document segmentation
+- EmbeddingService → vector generation
+- VectorStore → vector persistence
+
+---
+
+### Open Closed Principle (OCP)
+
+The system is open for extension without modifying existing code.
+
+Examples:
+
+New document parser support can be added without modifying pipeline code.
+
+```text
+BaseParser
+      ↓
+PDFParser
+DOCXParser
+TXTParser
+```
+
+---
+
+### Dependency Inversion Principle (DIP)
+
+High-level pipeline orchestration depends on abstractions rather than concrete implementations.
+
+Example:
+
+```text
+DocumentIngestionPipeline
+      ↓
+BaseParser
+BaseChunker
+BaseEmbeddingService
+```
+
+This allows components to be swapped without changing orchestration logic.
+
 ### Document Ingestion Pipeline
 
 Enterprise documents are uploaded and processed into searchable knowledge.
@@ -276,6 +332,99 @@ Services:
 
 ## Technology Stack
 
+## Design Patterns
+
+The project follows enterprise software design patterns to support extensibility and cloud provider independence.
+
+### Strategy Pattern
+
+Used when multiple interchangeable implementations exist.
+
+Examples:
+
+```text
+BaseParser
+      ↓
+PDFParser
+DOCXParser
+MarkdownParser
+```
+
+```text
+BaseChunker
+      ↓
+SemanticChunker
+RecursiveChunker
+```
+
+```text
+BaseEmbeddingService
+      ↓
+AzureOpenAIEmbeddingService
+OpenAIEmbeddingService
+LocalEmbeddingService
+```
+
+---
+
+### Factory Pattern
+
+Responsible for selecting implementations dynamically.
+
+Examples:
+
+```text
+ParserFactory → returns parser based on file type
+
+ChunkerFactory → returns chunker based on strategy
+```
+
+This avoids hardcoded dependencies.
+
+---
+
+### Pipeline Pattern
+
+The entire system follows staged processing architecture.
+
+```text
+Upload
+      ↓
+Parse
+      ↓
+Chunk
+      ↓
+Embed
+      ↓
+Store Vector
+      ↓
+Retrieve
+      ↓
+Evaluate
+      ↓
+Guardrails
+```
+
+Each stage operates independently.
+
+---
+
+### Adapter Pattern (Planned)
+
+Used to abstract cloud-specific services.
+
+Examples:
+
+```text
+Azure AI Search Adapter
+
+Pinecone Adapter
+
+Qdrant Adapter
+```
+
+Allows future vector store portability.
+
 ### Frontend
 
 - React
@@ -379,43 +528,47 @@ frontend/
 backend/
 
   ingestion/
-    upload_service.py
-    parser.py
-    chunker.py
+
+      parsers/
+          base_parser.py
+          pdf_parser.py
+          docx_parser.py
+          parser_factory.py
+
+      chunkers/
+          base_chunker.py
+          recursive_chunker.py
+          semantic_chunker.py
+          chunker_factory.py
+
+      upload_service.py
+      document_ingestion_pipeline.py
 
   embeddings/
-    embedding_service.py
+      base_embedding_service.py
+      azure_openai_embedding.py
 
   search/
-    vector_store.py
+      base_vector_store.py
+      azure_ai_search.py
 
   agents/
-    rag_agent.py
+      rag_agent.py
 
   evaluation/
-    evaluator.py
+      evaluator.py
 
   guardrails/
-    content_filter.py
+      validator.py
 
   api/
-    main.py
+      main.py
 
-  services/
-    foundry_client.py
+  tests/
+      test_ingestion.py
 
-infra/
-  bicep/
-  terraform/
-
-docs/
-  architecture.md
-
-tests/
-  ingestion/
-  retrieval/
-  evaluation/
-  guardrails/
+  config/
+      settings.py
 ```
 
 ---
