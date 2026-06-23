@@ -288,7 +288,7 @@ Services:
 
 ### Backend
 
-- Python 3.12
+- Python 3.13
 - FastAPI
 - AsyncIO
 - Pydantic

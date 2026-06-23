@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+pypdf
+openai
+azure-identity
+azure-search-documents
+python-dotenv
+pydantic
+aiofiles
+pytest
