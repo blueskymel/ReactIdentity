@@ -8,11 +8,13 @@ class PDFParser(BaseParser):
 
         reader = PdfReader(file_path)
 
-        text = ""
+        pages = []
 
         for page in reader.pages:
-            extracted = page.extract_text()
-            if extracted:
-                text += extracted + "\n"
 
-        return text
+            extracted = page.extract_text()
+
+            if extracted:
+                pages.append(extracted)
+
+        return "\n".join(pages)

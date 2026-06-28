@@ -9,7 +9,8 @@ from backend.embeddings.base_embedding_service import (
 from backend.config.settings import (
     AZURE_OPENAI_ENDPOINT,
     AZURE_OPENAI_API_KEY,
-    AZURE_OPENAI_EMBEDDING_MODEL
+    AZURE_OPENAI_EMBEDDING_MODEL,
+    AZURE_OPENAI_API_VERSION
 )
 
 
@@ -21,7 +22,7 @@ class AzureOpenAIEmbeddingService(
 
         self.client = AzureOpenAI(
             api_key=AZURE_OPENAI_API_KEY,
-            api_version="2024-02-01",
+            api_version=AZURE_OPENAI_API_VERSION,
             azure_endpoint=AZURE_OPENAI_ENDPOINT
         )
 
@@ -30,9 +31,16 @@ class AzureOpenAIEmbeddingService(
         text: str
     ) -> List[float]:
 
-        response = self.client.embeddings.create(
-            model=AZURE_OPENAI_EMBEDDING_MODEL,
-            input=text
-        )
+        try:
 
-        return response.data[0].embedding
+            response = self.client.embeddings.create(
+                model=AZURE_OPENAI_EMBEDDING_MODEL,
+                input=text
+            )
+
+            return response.data[0].embedding
+
+        except Exception as ex:
+            raise RuntimeError(
+                f"Embedding generation failed: {ex}"
+            )

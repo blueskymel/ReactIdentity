@@ -1,0 +1,9 @@
+Customer data must be retained for 7 years.
+
+Annual leave entitlement is 20 days per year.
+
+Only managers can approve overtime requests.
+
+Financial reports must be reviewed quarterly.
+
+Employees must reset passwords every 90 days.
