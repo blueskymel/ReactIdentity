@@ -1,20 +1,15 @@
 import asyncio
 
-from backend.services.rag_pipeline import (
-    RagPipeline
-)
+import pytest
 
-from backend.retrieval.mock_retriever import (
-    MockRetriever
+from backend.dependencies import (
+    get_rag_pipeline
 )
 
 
 async def run_pipeline():
 
-    pipeline = RagPipeline(
-
-        retriever=MockRetriever()
-    )
+    pipeline = get_rag_pipeline()
 
     result = await pipeline.ask(
 
@@ -31,6 +26,7 @@ if __name__ == "__main__":
     )
 
 
+@pytest.mark.integration
 def test_pipeline():
 
     asyncio.run(

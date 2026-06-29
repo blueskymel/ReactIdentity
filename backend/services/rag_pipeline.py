@@ -1,6 +1,4 @@
-from backend.retrieval.base_retriever import (
-    BaseRetriever
-)
+import logging
 
 from backend.llm.chat_service import (
     ChatService
@@ -22,6 +20,13 @@ from backend.models.rag_response_model import (
     RagResponse
 )
 
+from backend.retrieval.retrieval_service import (
+    RetrievalService
+)
+
+
+logger = logging.getLogger(__name__)
+
 
 class RagPipeline:
 
@@ -29,15 +34,16 @@ class RagPipeline:
 
         self,
 
-        retriever: BaseRetriever
+        retrieval_service: RetrievalService,
+        chat_service: ChatService,
+        evaluator: RetrievalEvaluator
 
     ):
 
-        self.retriever = retriever
+        self.retrieval_service = retrieval_service
+        self.chat_service = chat_service
+        self.evaluator = evaluator
 
-        self.chat_service = ChatService()
-
-        self.evaluator = RetrievalEvaluator()
 
     async def ask(
 
@@ -47,9 +53,13 @@ class RagPipeline:
 
     ) -> RagResponse:
 
+        logger.info(
+            f"Processing question: {question}"
+        )
+
         # Step 1 Retrieve documents
 
-        chunks = self.retriever.retrieve(
+        chunks = await self.retrieval_service.retrieve(
             question
         )
 
@@ -59,38 +69,42 @@ class RagPipeline:
                 "No documents found"
             )
 
+        logger.info(
+            f"Retrieved {len(chunks)} chunks"
+        )
+
         # Step 2 Build context
 
-        context = "\n\n".join(
+        context = self._build_context(
             chunks
         )
 
         # Step 3 Generate answer
 
-        answer = (
-            self.chat_service.generate_response(
+        answer = await self.chat_service.generate_response(
 
-                ChatRequest(
+            ChatRequest(
 
-                    question=question,
+                question=question,
 
-                    context=context
-                )
+                context=context
             )
         )
 
         # Step 4 Evaluate retrieval quality
 
-        evaluation = (
-            await self.evaluator.evaluate(
+        evaluation = await self.evaluator.evaluate(
 
-                EvaluationInput(
+            EvaluationInput(
 
-                    question=question,
+                question=question,
 
-                    context=context
-                )
+                context=context
             )
+        )
+
+        logger.info(
+            f"Evaluation score: {evaluation.score}"
         )
 
         # Step 5 Return result
@@ -99,11 +113,25 @@ class RagPipeline:
 
             answer=answer,
 
-            evaluation_score=
-            evaluation.score,
+            evaluation_score=evaluation.score,
 
-            passed_evaluation=
-            evaluation.passed,
+            passed_evaluation=evaluation.passed,
 
             retrieved_context=context
+        )
+
+
+    def _build_context(
+
+        self,
+
+        chunks
+
+    ) -> str:
+
+        return "\n\n".join(
+
+            chunk.content
+
+            for chunk in chunks
         )

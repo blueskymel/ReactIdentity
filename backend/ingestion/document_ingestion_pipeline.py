@@ -8,7 +8,7 @@ class DocumentProcessor:
 
     def __init__(
         self,
-        chunking_strategy: str = "semantic"
+        chunking_strategy: str = "paragraph"
     ):
         self.chunking_strategy = chunking_strategy
 

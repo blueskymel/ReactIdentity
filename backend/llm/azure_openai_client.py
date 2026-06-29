@@ -1,4 +1,4 @@
-from openai import AzureOpenAI
+from openai import AsyncAzureOpenAI
 
 from backend.config.settings import (
 
@@ -13,9 +13,9 @@ from backend.config.settings import (
 class AzureOpenAIClient:
 
     @staticmethod
-    def create() -> AzureOpenAI:
+    def create() -> AsyncAzureOpenAI:
 
-        return AzureOpenAI(
+        return AsyncAzureOpenAI(
 
             api_key=AZURE_OPENAI_API_KEY,
 

@@ -1,3 +1,7 @@
+import asyncio
+
+import pytest
+
 from backend.llm.chat_service import (
     ChatService
 )
@@ -7,17 +11,20 @@ from backend.models.chat.chat_request_model import (
 )
 
 
+@pytest.mark.integration
 def test_chat():
 
     service = ChatService()
 
-    result = service.generate_response(
-        ChatRequest(
-            question=
-            "How long should customer data be stored?",
+    result = asyncio.run(
+        service.generate_response(
+            ChatRequest(
+                question=
+                "How long should customer data be stored?",
 
-            context=
-            "Customer personal data must be retained for 7 years according to company policy."
+                context=
+                "Customer personal data must be retained for 7 years according to company policy."
+            )
         )
     )
 

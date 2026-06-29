@@ -20,6 +20,10 @@ from backend.config.settings import (
     AZURE_SEARCH_INDEX
 )
 
+from backend.common.logger import (
+    logger
+)
+AZURE_SEARCH_VECTOR_FIELD = "embedding"
 
 class AzureAISearchVectorStore(
     BaseVectorStore
@@ -37,6 +41,32 @@ class AzureAISearchVectorStore(
             )
         )
 
+    def _map_search_result(
+        self,
+        result: dict
+    ) -> VectorDocument:
+
+        return VectorDocument(
+
+            id=result["id"],
+
+            content=result["content"],
+
+            embedding=[],
+
+            document_name=result["document_name"],
+
+            chunk_index=result["chunk_index"],
+
+            metadata={
+                "score":
+                result.get(
+                    "@search.score",
+                    0
+                )
+            }
+        )
+
     def store(
         self,
         document: VectorDocument
@@ -52,32 +82,77 @@ class AzureAISearchVectorStore(
 
         try:
 
+            logger.info(
+                "Calling Azure AI Search",
+                extra={
+                    "operation": "upload_documents",
+                    "index": AZURE_SEARCH_INDEX,
+                    "document_name": document.document_name,
+                    "chunk_index": document.chunk_index,
+                    "document_count": 1
+                }
+            )
+
             result = self.client.upload_documents(
                 documents=[payload]
             )
 
-            print(result)
+            if not all(
+
+                item.succeeded
+
+                for item in result
+            ):
+
+                logger.error(
+                    "Azure Search document upload failed",
+                    extra={
+                        "document_name": document.document_name
+                    }
+                )
+
+                raise RuntimeError(
+                    "Document upload failed"
+                )
+
+            logger.info(
+                "Azure Search document upload succeeded",
+                extra={
+                    "document_name": document.document_name
+                }
+            )
 
         except Exception as ex:
 
-            raise RuntimeError(
-                f"Azure AI Search upload failed: {ex}"
+            logger.exception(
+                "Azure Search upload failed"
             )
 
+            raise
 
     def search(
         self,
         query: str,
         embedding: List[float],
         top_k: int = 3
-    ) -> List[dict]:
+    ) -> List[VectorDocument]:
 
         vector_query = VectorizedQuery(
             vector=embedding,
 
             k_nearest_neighbors=top_k,
 
-            fields="embedding"
+            fields=AZURE_SEARCH_VECTOR_FIELD
+        )
+
+        logger.info(
+            "Calling Azure AI Search",
+            extra={
+                "operation": "vector_search",
+                "index": AZURE_SEARCH_INDEX,
+                "top_k": top_k,
+                "embedding_dimensions": len(embedding)
+            }
         )
 
         results = self.client.search(
@@ -89,18 +164,41 @@ class AzureAISearchVectorStore(
             top=top_k
         )
 
-        return list(results)
+        return [
+
+            self._map_search_result(
+                result
+            )
+
+            for result in results
+        ]
+
 
     def delete_by_document_name(
         self,
         document_name: str
     ) -> None:
 
+        logger.info(
+            "Calling Azure AI Search",
+            extra={
+                "operation": "search_documents_for_delete",
+                "index": AZURE_SEARCH_INDEX,
+                "document_name": document_name
+            }
+        )
+
+        safe_document_name = (
+            document_name.replace(
+                "'",
+                "''"
+            )
+        )
         results = self.client.search(
 
             search_text="*",
 
-            filter=f"document_name eq '{document_name}'"
+            filter=f"document_name eq '{safe_document_name}'"
         )
 
         docs_to_delete = []
@@ -115,10 +213,23 @@ class AzureAISearchVectorStore(
 
         if docs_to_delete:
 
+            logger.info(
+                "Calling Azure AI Search",
+                extra={
+                    "operation": "delete_documents",
+                    "index": AZURE_SEARCH_INDEX,
+                    "document_name": document_name,
+                    "document_count": len(docs_to_delete)
+                }
+            )
+
             self.client.delete_documents(
                 documents=docs_to_delete
             )
 
-            print(
-                f"Deleted {len(docs_to_delete)} documents"
-            )        
+            logger.info(
+                "Documents deleted",
+                extra={
+                    "count": len(docs_to_delete)
+                }
+            )

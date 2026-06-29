@@ -1,5 +1,7 @@
 import uuid
 
+import pytest
+
 from backend.embeddings.azure_openai_embedding import (
     AzureOpenAIEmbeddingService
 )
@@ -17,6 +19,7 @@ from backend.ingestion.chunkers.paragraph_chunker import (
 )
 
 
+@pytest.mark.integration
 def test_upload():
     vector_store = AzureAISearchVectorStore()
     vector_store.delete_by_document_name(

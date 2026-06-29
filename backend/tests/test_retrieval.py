@@ -1,3 +1,7 @@
+import asyncio
+
+import pytest
+
 from backend.embeddings.azure_openai_embedding import (
     AzureOpenAIEmbeddingService
 )
@@ -11,6 +15,7 @@ from backend.retrieval.retrieval_service import (
 )
 
 
+@pytest.mark.integration
 def test_retrieval():
 
     embedding_service = (
@@ -28,9 +33,10 @@ def test_retrieval():
         )
     )
 
-    results = retrieval_service.retrieve(
-
-        "How long should customer data be stored?"
+    results = asyncio.run(
+        retrieval_service.retrieve(
+            "How long should customer data be stored?"
+        )
     )
 
     for result in results:

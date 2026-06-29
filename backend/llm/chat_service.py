@@ -24,7 +24,7 @@ class ChatService:
             AzureOpenAIClient.create()
         )
 
-    def generate_response(
+    async def generate_response(
         self,
         request: ChatRequest
     ) -> str:
@@ -44,7 +44,6 @@ Context:
 Question:
 {request.question}
 """
-
         logger.info(
             "Calling Azure OpenAI",
             extra={
@@ -54,9 +53,8 @@ Question:
                 "operation": "chat_completion"
             }
         )
-
         response = (
-            self.client.chat.completions.create(
+            await self.client.chat.completions.create(
 
                 model=AZURE_OPENAI_CHAT_DEPLOYMENT,
 

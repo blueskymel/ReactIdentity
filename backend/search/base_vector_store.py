@@ -22,7 +22,7 @@ class BaseVectorStore(ABC):
         query: str,
         embedding: List[float],
         top_k: int = 3
-    ) -> List[dict]:
+    ) -> List[VectorDocument]:
         pass
 
     @abstractmethod

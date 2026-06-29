@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 from backend.evaluation.retrieval_evaluator import (
     RetrievalEvaluator
 )
@@ -9,6 +11,7 @@ from backend.models.evaluation.evaluation_request_models import (
 )
 
 
+@pytest.mark.integration
 def test_evaluation():
 
     evaluator = (
