@@ -1,4 +1,4 @@
-from search.azure_ai_search_vector_store import (
+from backend.search.azure_ai_search_vector_store import (
     AzureAISearchVectorStore
 )
 

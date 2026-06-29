@@ -6,11 +6,11 @@ from backend.evaluation.base_evaluator import (
     BaseEvaluator
 )
 
-from backend.models.evaluation_request_models import (
+from backend.models.evaluation.evaluation_request_models import (
     EvaluationInput
 )
 
-from backend.models.evaluation_response_models import (
+from backend.models.evaluation.evaluation_response_models import (
     EvaluationResult
 )
 
@@ -20,6 +20,10 @@ from backend.config.settings import (
     AZURE_OPENAI_CHAT_DEPLOYMENT,
     AZURE_OPENAI_API_VERSION,
     EVALUATION_TEMPERATURE
+)
+
+from backend.common.logger import (
+    logger
 )
 
 
@@ -71,6 +75,15 @@ Scoring criteria:
 
 Return ONLY the numeric score.
 """
+
+        logger.info(
+            "Calling Azure OpenAI",
+            extra={
+                "deployment": AZURE_OPENAI_CHAT_DEPLOYMENT,
+                "temperature": EVALUATION_TEMPERATURE,
+                "operation": "retrieval_evaluation"
+            }
+        )
 
         response = (
             self.client.chat.completions.create(

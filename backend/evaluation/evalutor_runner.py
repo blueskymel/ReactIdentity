@@ -4,7 +4,7 @@ from backend.evaluation.base_evaluator import (
     BaseEvaluator
 )
 
-from backend.models.evaluation_request_models import (
+from backend.models.evaluation.evaluation_request_models import (
     EvaluationInput
 )
 

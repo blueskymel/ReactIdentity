@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from backend.models.evaluation_request_models import (
+from backend.models.evaluation.evaluation_request_models import (
     EvaluationInput
 )
-from backend.models.evaluation_response_models import (
+from backend.models.evaluation.evaluation_response_models import (
     EvaluationResult
 )
 

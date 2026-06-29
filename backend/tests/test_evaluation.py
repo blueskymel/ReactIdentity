@@ -4,7 +4,7 @@ from backend.evaluation.retrieval_evaluator import (
     RetrievalEvaluator
 )
 
-from backend.models.evaluation_request_models import (
+from backend.models.evaluation.evaluation_request_models import (
     EvaluationInput
 )
 

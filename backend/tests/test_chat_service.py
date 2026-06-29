@@ -2,7 +2,7 @@ from backend.llm.chat_service import (
     ChatService
 )
 
-from backend.models.chat_request_model import (
+from backend.models.chat.chat_request_model import (
     ChatRequest
 )
 

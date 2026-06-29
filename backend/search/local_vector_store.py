@@ -1,8 +1,8 @@
-from search.base_vector_store import (
+from backend.search.base_vector_store import (
     BaseVectorStore
 )
 
-from models.vector_document import (
+from backend.models.vector_document import (
     VectorDocument
 )
 

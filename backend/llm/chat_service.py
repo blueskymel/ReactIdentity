@@ -10,7 +10,10 @@ from backend.config.settings import (
 
     CHAT_MAX_TOKENS
 )
-from backend.models.chat_request_model import ChatRequest
+from backend.common.logger import (
+    logger
+)
+from backend.models.chat.chat_request_model import ChatRequest
 
 
 class ChatService:
@@ -41,6 +44,16 @@ Context:
 Question:
 {request.question}
 """
+
+        logger.info(
+            "Calling Azure OpenAI",
+            extra={
+                "deployment": AZURE_OPENAI_CHAT_DEPLOYMENT,
+                "temperature": CHAT_TEMPERATURE,
+                "max_tokens": CHAT_MAX_TOKENS,
+                "operation": "chat_completion"
+            }
+        )
 
         response = (
             self.client.chat.completions.create(

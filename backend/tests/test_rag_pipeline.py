@@ -9,7 +9,7 @@ from backend.retrieval.mock_retriever import (
 )
 
 
-async def test_pipeline():
+async def run_pipeline():
 
     pipeline = RagPipeline(
 
@@ -27,5 +27,12 @@ async def test_pipeline():
 if __name__ == "__main__":
 
     asyncio.run(
-        test_pipeline()
+        run_pipeline()
+    )
+
+
+def test_pipeline():
+
+    asyncio.run(
+        run_pipeline()
     )

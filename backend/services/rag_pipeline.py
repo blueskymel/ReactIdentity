@@ -10,11 +10,11 @@ from backend.evaluation.retrieval_evaluator import (
     RetrievalEvaluator
 )
 
-from backend.models.chat_request_model import (
+from backend.models.chat.chat_request_model import (
     ChatRequest
 )
 
-from backend.models.evaluation_request_models import (
+from backend.models.evaluation.evaluation_request_models import (
     EvaluationInput
 )
 

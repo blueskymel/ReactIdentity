@@ -13,6 +13,10 @@ from backend.config.settings import (
     AZURE_OPENAI_API_VERSION
 )
 
+from backend.common.logger import (
+    logger
+)
+
 
 class AzureOpenAIEmbeddingService(
     BaseEmbeddingService
@@ -32,6 +36,14 @@ class AzureOpenAIEmbeddingService(
     ) -> List[float]:
 
         try:
+
+            logger.info(
+                "Calling Azure OpenAI",
+                extra={
+                    "deployment": AZURE_OPENAI_EMBEDDING_MODEL,
+                    "operation": "embedding"
+                }
+            )
 
             response = self.client.embeddings.create(
                 model=AZURE_OPENAI_EMBEDDING_MODEL,
