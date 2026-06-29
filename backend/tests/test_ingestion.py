@@ -12,13 +12,16 @@ from backend.models.vector_document import (
     VectorDocument
 )
 
-from backend.ingestion.chunkers.recursive_chunker import (
-    RecursiveChunker
+from backend.ingestion.chunkers.paragraph_chunker import (
+    ParagraphChunker
 )
 
 
 def test_upload():
-
+    vector_store = AzureAISearchVectorStore()
+    vector_store.delete_by_document_name(
+        "sample_policy.txt"
+    )
     with open(
         "backend/test_data/sample_policy.txt",
         "r",
@@ -27,7 +30,7 @@ def test_upload():
 
         text = file.read()
 
-    chunker = RecursiveChunker()
+    chunker = ParagraphChunker()
 
     chunks = chunker.chunk(text)
 
@@ -38,7 +41,8 @@ def test_upload():
     vector_store = (
         AzureAISearchVectorStore()
     )
-
+    print(chunks)
+    print(f"Total chunks: {len(chunks)}")
     for index, chunk in enumerate(chunks):
 
         print(

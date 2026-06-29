@@ -1,3 +1,7 @@
+from typing import List
+from azure.search.documents.models import (
+    VectorizedQuery
+)
 from azure.core.credentials import AzureKeyCredential
 
 from azure.search.documents import SearchClient
@@ -59,3 +63,62 @@ class AzureAISearchVectorStore(
             raise RuntimeError(
                 f"Azure AI Search upload failed: {ex}"
             )
+
+
+    def search(
+        self,
+        query: str,
+        embedding: List[float],
+        top_k: int = 3
+    ) -> List[dict]:
+
+        vector_query = VectorizedQuery(
+            vector=embedding,
+
+            k_nearest_neighbors=top_k,
+
+            fields="embedding"
+        )
+
+        results = self.client.search(
+
+            search_text=query,
+
+            vector_queries=[vector_query],
+
+            top=top_k
+        )
+
+        return list(results)
+
+    def delete_by_document_name(
+        self,
+        document_name: str
+    ) -> None:
+
+        results = self.client.search(
+
+            search_text="*",
+
+            filter=f"document_name eq '{document_name}'"
+        )
+
+        docs_to_delete = []
+
+        for result in results:
+
+            docs_to_delete.append({
+
+                "id": result["id"]
+            })
+
+
+        if docs_to_delete:
+
+            self.client.delete_documents(
+                documents=docs_to_delete
+            )
+
+            print(
+                f"Deleted {len(docs_to_delete)} documents"
+            )        
