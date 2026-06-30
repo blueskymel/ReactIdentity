@@ -20,9 +20,9 @@ from backend.ingestion.chunkers.paragraph_chunker import (
 
 
 @pytest.mark.integration
-def test_upload():
+async def test_upload():
     vector_store = AzureAISearchVectorStore()
-    vector_store.delete_by_document_name(
+    await vector_store.delete_by_document_name(
         "sample_policy.txt"
     )
     with open(
@@ -53,7 +53,7 @@ def test_upload():
         )
 
         embedding = (
-            embedding_service.generate_embedding(
+            await embedding_service.generate_embedding(
                 chunk
             )
         )
@@ -73,7 +73,7 @@ def test_upload():
             metadata={}
         )
 
-        vector_store.store(document)
+        await vector_store.store(document)
 
         print(
             "Uploaded successfully"
@@ -82,4 +82,4 @@ def test_upload():
 
 if __name__ == "__main__":
 
-    test_upload()
+    await test_upload()

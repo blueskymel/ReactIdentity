@@ -1,10 +1,16 @@
 from typing import List
+
 from azure.search.documents.models import (
     VectorizedQuery
 )
-from azure.core.credentials import AzureKeyCredential
 
-from azure.search.documents import SearchClient
+from azure.core.credentials import (
+    AzureKeyCredential
+)
+
+from azure.search.documents.aio import (
+    SearchClient
+)
 
 from backend.search.base_vector_store import (
     BaseVectorStore
@@ -23,7 +29,10 @@ from backend.config.settings import (
 from backend.common.logger import (
     logger
 )
+
+
 AZURE_SEARCH_VECTOR_FIELD = "embedding"
+
 
 class AzureAISearchVectorStore(
     BaseVectorStore
@@ -32,6 +41,7 @@ class AzureAISearchVectorStore(
     def __init__(self):
 
         self.client = SearchClient(
+
             endpoint=AZURE_SEARCH_ENDPOINT,
 
             index_name=AZURE_SEARCH_INDEX,
@@ -41,9 +51,13 @@ class AzureAISearchVectorStore(
             )
         )
 
+
     def _map_search_result(
+
         self,
+
         result: dict
+
     ) -> VectorDocument:
 
         return VectorDocument(
@@ -59,17 +73,20 @@ class AzureAISearchVectorStore(
             chunk_index=result["chunk_index"],
 
             metadata={
-                "score":
-                result.get(
+                "score": result.get(
                     "@search.score",
                     0
                 )
             }
         )
 
-    def store(
+
+    async def store(
+
         self,
+
         document: VectorDocument
+
     ) -> None:
 
         payload = {
@@ -93,7 +110,7 @@ class AzureAISearchVectorStore(
                 }
             )
 
-            result = self.client.upload_documents(
+            result = await self.client.upload_documents(
                 documents=[payload]
             )
 
@@ -122,7 +139,7 @@ class AzureAISearchVectorStore(
                 }
             )
 
-        except Exception as ex:
+        except Exception:
 
             logger.exception(
                 "Azure Search upload failed"
@@ -130,14 +147,21 @@ class AzureAISearchVectorStore(
 
             raise
 
-    def search(
+
+    async def search(
+
         self,
+
         query: str,
+
         embedding: List[float],
+
         top_k: int = 3
+
     ) -> List[VectorDocument]:
 
         vector_query = VectorizedQuery(
+
             vector=embedding,
 
             k_nearest_neighbors=top_k,
@@ -155,7 +179,7 @@ class AzureAISearchVectorStore(
             }
         )
 
-        results = self.client.search(
+        results = await self.client.search(
 
             search_text=query,
 
@@ -164,19 +188,26 @@ class AzureAISearchVectorStore(
             top=top_k
         )
 
-        return [
+        documents = []
 
-            self._map_search_result(
-                result
+        async for result in results:
+
+            documents.append(
+
+                self._map_search_result(
+                    result
+                )
             )
 
-            for result in results
-        ]
+        return documents
 
 
-    def delete_by_document_name(
+    async def delete_by_document_name(
+
         self,
+
         document_name: str
+
     ) -> None:
 
         logger.info(
@@ -189,12 +220,14 @@ class AzureAISearchVectorStore(
         )
 
         safe_document_name = (
+
             document_name.replace(
                 "'",
                 "''"
             )
         )
-        results = self.client.search(
+
+        results = await self.client.search(
 
             search_text="*",
 
@@ -203,7 +236,7 @@ class AzureAISearchVectorStore(
 
         docs_to_delete = []
 
-        for result in results:
+        async for result in results:
 
             docs_to_delete.append({
 
@@ -223,7 +256,7 @@ class AzureAISearchVectorStore(
                 }
             )
 
-            self.client.delete_documents(
+            await self.client.delete_documents(
                 documents=docs_to_delete
             )
 

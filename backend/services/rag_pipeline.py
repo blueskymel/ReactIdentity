@@ -24,6 +24,9 @@ from backend.retrieval.retrieval_service import (
     RetrievalService
 )
 
+from backend.guardrails.guardrail_service import (
+    GuardrailService
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,13 +39,15 @@ class RagPipeline:
 
         retrieval_service: RetrievalService,
         chat_service: ChatService,
-        evaluator: RetrievalEvaluator
+        evaluator: RetrievalEvaluator,
+        guardrail_service: GuardrailService
 
     ):
 
         self.retrieval_service = retrieval_service
         self.chat_service = chat_service
         self.evaluator = evaluator
+        self.guardrail_service = guardrail_service
 
 
     async def ask(
@@ -56,6 +61,18 @@ class RagPipeline:
         logger.info(
             f"Processing question: {question}"
         )
+
+        guardrail = await (
+            self.guardrail_service
+            .validate_input(question)
+        )
+
+
+        if not guardrail.allowed:
+
+            raise ValueError(
+                guardrail.reason
+            )
 
         # Step 1 Retrieve documents
 
@@ -90,6 +107,16 @@ class RagPipeline:
                 context=context
             )
         )
+        output_guardrail = await (
+
+            self.guardrail_service
+            .validate_output(answer)
+        )
+        if not output_guardrail.allowed:
+
+            raise ValueError(
+                output_guardrail.reason
+            )
 
         # Step 4 Evaluate retrieval quality
 

@@ -9,7 +9,7 @@ from backend.models.vector_document import (
 class BaseVectorStore(ABC):
 
     @abstractmethod
-    def store(
+    async def store(
         self,
         document: VectorDocument
     ) -> None:
@@ -17,7 +17,7 @@ class BaseVectorStore(ABC):
 
 
     @abstractmethod
-    def search(
+    async def search(
         self,
         query: str,
         embedding: List[float],
@@ -26,7 +26,7 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def delete_by_document_name(
+    async def delete_by_document_name(
         self,
         document_name: str
     ) -> None:

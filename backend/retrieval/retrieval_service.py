@@ -42,7 +42,7 @@ class RetrievalService:
     ) -> list[VectorDocument]:
         try:
             query_embedding = (
-                self.embedding_service
+                await self.embedding_service
                 .generate_embedding(query)
             )
 
@@ -57,7 +57,7 @@ class RetrievalService:
             )
 
             results = (
-                self.vector_store
+                await self.vector_store
                 .search(query, query_embedding, top_k=top_k)
             )
 
